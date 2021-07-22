@@ -1,14 +1,14 @@
+import datetime
+import os
 import subprocess
+import time
+
+import package.utils as utils
 from package.ui.mainwindow_ui import Ui_Form
-from PyQt5 import QtWidgets as qtw
+from pynotifier import Notification
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtGui as qtg
-
-# from selenium import webdriver
-import datetime
-import time
-from pynotifier import Notification
-import package.utils as utils
+from PyQt5 import QtWidgets as qtw
 
 
 class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widget above
@@ -68,6 +68,6 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         # Then it'll get the paper information from mendeley so that it can write it into the tex files
 
     def independent_study(self):
-        qtw.QTextEdit(self)
         utils.open_i3_screen(7)
-        subprocess.call("/usr/bin/mendeleydesktop")
+        qtw.QTextEdit(self)
+        os.system("anki-vim ")
