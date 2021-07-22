@@ -6,23 +6,52 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>216</width>
-    <height>95</height>
+    <width>111</width>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QPushButton" name="daily_setup_button">
+   <item row="0" column="0">
+    <widget class="QPushButton" name="deep_work_button">
      <property name="text">
-      <string>Daily setup</string>
+      <string>Start deep work timer</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0">
+    <widget class="QPushButton" name="paper_button">
+     <property name="text">
+      <string>Paper reading</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QLabel" name="deep_work_label">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -34,10 +63,17 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="deep_work_button">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="daily_setup_button">
      <property name="text">
-      <string>Start timer</string>
+      <string>Daily setup</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QPushButton" name="independent_study_button">
+     <property name="text">
+      <string>Independent study</string>
      </property>
     </widget>
    </item>

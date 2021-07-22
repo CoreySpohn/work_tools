@@ -1,0 +1,48 @@
+From youtube series Master Pyqt5 by Alan D Moore Codes
+Making the form:
+    Open qtcreator
+    File -> new file or project
+    On the left side click Qt in the bottom box
+    Then select widget
+
+Generating python file from form:
+    In the command line run
+    pyuic5 -o form_name.py form_name.ui
+    That will make a python file from the current ui file
+    YOU DO NOT WANT TO EDIT THAT PYTHON FILE SINCE IT WILL BE OVERWRITTEN EVERY TIME YOU CHANGE THE
+    UI FILE IN QT CREATOR
+
+Referencing the generated python file:
+    Basic setup for another file called main.py using form_name.py below:
+'''
+from form_name import Ui_Form
+from PyQt5 import QtWidgets as qtw
+from PyQt5 import QtCore as qtc
+
+class FormWindow(qtw.Widget): #Would be something else if you didn't use widget above
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ui = Ui_Form()
+        self.ui.setupUi(self)
+
+    def method_of_interacting_with_form(self):
+        ...
+    def other_method(self):
+        ...
+if __name__ == '__main__':
+    app = qtw.QApplication([])
+    widget = LoginWindow()
+    widget.show()
+
+    app.exec_()
+'''
+
+    To access parts of the form, like input boxes you have to call self.ui.inputbox.text() or what
+    have you
+    To connect a button or something with a method you have to put a line in the __init__ function,
+    something like:
+        self.ui.submit_button.clicked.connect(self.method_of_interacting_with_form)
+
+Folder structure:
+https://stackoverflow.com/questions/22177976/generally-speaking-how-are-python-projects-structured
+
