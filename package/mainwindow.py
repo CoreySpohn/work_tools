@@ -8,6 +8,7 @@ from pathlib import Path
 
 import package.utils as utils
 import pyautogui
+from package.AnkiSubject import AnkiSubject
 from package.PaperInfo import PaperInfo
 from package.ui.mainwindow_ui import Ui_Form
 from pynotifier import Notification
@@ -45,14 +46,10 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         self.ui.paper_button.clicked.connect(self.paper_reading_popup)
 
         # Flash card stuff
-        self.ui.write_flash_cards_button.clicked.connect(self.write_flash_cards)
+        self.anki_subject = AnkiSubject()
+        self.anki_subject.got_subject.connect(self.write_flash_cards)
+        self.ui.write_flash_cards_button.clicked.connect(self.anki_subject_popup)
         self.ui.add_flash_cards_button.clicked.connect(self.add_flash_cards_to_anki)
-
-    def pop_up_str_input(self, prompt):
-        text, _ = qtw.QInputDialog.getText(
-            self, "Getting string", prompt, qtw.QLineEdit.Normal, ""
-        )
-        return text
 
     def daily_setup(self):
         utils.open_website_on_i3_screen(1, "https://www.ticktick.com")
@@ -194,14 +191,29 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         pyautogui.press("G")
         pyautogui.press("o")
 
-    def write_flash_cards(self) -> None:
+    def anki_subject_popup(self) -> None:
+        """
+        This goes to the proper i3 screen and opens up a menu to select the study subject
+        """
         utils.open_i3_screen(7)
-        self.study_deck = self.pop_up_str_input("What Anki deck?").replace(" ", "_")
+        self.anki_subject.show()
+
+    def write_flash_cards(self, subject: str) -> None:
+        """
+        This opens after the self.anki_subject popup done button is clicked thanks to the
+        self.anki_subject.got_subject.connect(self.write_flash_cards)
+        line. Then it opens that subject
+        """
+        self.anki_subject.close()
+        self.anki_subject_str = subject
         os.system(
-            f"gnome-terminal -e 'bash -c \"anki-vim {self.study_deck}; exec bash\"'"
+            f"gnome-terminal -e 'bash -c \"anki-vim {self.anki_subject_str}; exec bash\"'"
         )
 
     def add_flash_cards_to_anki(self) -> None:
+        """
+        This will open up the anki app and then the import card menu
+        """
         utils.open_i3_screen(7)
         subprocess.Popen("anki")
         time.sleep(2)

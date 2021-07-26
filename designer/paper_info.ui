@@ -83,6 +83,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>paper_field_line_edit</tabstop>
+  <tabstop>paper_title_line_edit</tabstop>
+  <tabstop>paper_authors_line_edit</tabstop>
+  <tabstop>paper_journal_line_edit</tabstop>
+  <tabstop>paper_year_line_edit</tabstop>
+  <tabstop>paper_tags_line_edit</tabstop>
+  <tabstop>done_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
