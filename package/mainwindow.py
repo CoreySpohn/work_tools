@@ -182,7 +182,7 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
             paper_field_lines = paper_field_file.readlines()
 
         paper_field_lines.append(
-            f"\input{{{self.paper_field.lower()}/{self.paper_tex_filename}}}"
+            f"\n\input{{{self.paper_field.lower()}/{self.paper_tex_filename}}}"
         )
         with open(self.paper_field_tex_path, "w") as paper_field_file:
             paper_field_file.writelines(paper_field_lines)
