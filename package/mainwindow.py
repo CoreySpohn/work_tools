@@ -34,7 +34,6 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         self.deep_work_timer = qtc.QTimer(self)
         self.deep_work_timer.start(1000)
         self.deep_work_start = False
-        self.deep_work_counter = datetime.timedelta(minutes=90).seconds
         self.deep_work_timer.timeout.connect(self.show_deep_work_timing)
 
         # Paper reading
@@ -56,8 +55,12 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         utils.open_website("https://mail.google.com")
 
     def start_deep_work_timing(self) -> None:
-        self.ui.deep_work_button.setEnabled(False)
-        self.deep_work_start = True
+        # self.ui.deep_work_button.setEnabled(False)
+        if self.deep_work_start == False:
+            self.deep_work_counter = datetime.timedelta(minutes=90).seconds
+            self.deep_work_start = True
+        else:
+            print('Not done with current timer')
 
     def show_deep_work_timing(self) -> None:
         if self.deep_work_start:
