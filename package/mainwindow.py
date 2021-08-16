@@ -52,7 +52,7 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
 
     def daily_setup(self):
         utils.open_website_on_i3_screen(1, "https://www.ticktick.com")
-        utils.open_website("https://mail.google.com")
+        utils.open_website("https://mail.google.com/mail/u/1")
 
     def start_deep_work_timing(self) -> None:
         # self.ui.deep_work_button.setEnabled(False)
