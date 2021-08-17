@@ -189,7 +189,7 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
 
         # Now open up the created file in vim for editing
         os.system(
-            f"gnome-terminal -e 'bash -c \"vim {self.paper_tex_filename_path}; exec bash\"'"
+            f"gnome-terminal -e 'bash -c \"nvim {self.paper_tex_filename_path}; exec bash\"'"
         )
         pyautogui.press("G")
         pyautogui.press("o")
