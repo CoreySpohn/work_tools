@@ -15,6 +15,7 @@ from pynotifier import Notification
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtWidgets as qtw
+from pyzotero import zotero
 
 
 class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widget above
@@ -27,14 +28,16 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         self.ui.daily_setup_button.clicked.connect(self.daily_setup)
 
         # Setting up timer
-        self.ui.deep_work_button.clicked.connect(self.start_deep_work_timing)
-        self.ui.deep_work_label.setText("1:30:00 s")
-        self.ui.deep_work_label.setFont(qtg.QFont("Arial", 30))
+        self.ui.work_button.clicked.connect(self.start_work_timing)
+        self.ui.stop_work_button.clicked.connect(self.stop_work_timing)
+        self.ui.work_label.setText("6:00:00 s")
+        self.ui.work_label.setFont(qtg.QFont("Arial", 30))
 
-        self.deep_work_timer = qtc.QTimer(self)
-        self.deep_work_timer.start(1000)
-        self.deep_work_start = False
-        self.deep_work_timer.timeout.connect(self.show_deep_work_timing)
+        self.work_timer = qtc.QTimer(self)
+        self.work_timer.start(1000)
+        self.work_start = False
+        self.work_timer.timeout.connect(self.show_work_timing)
+        self.work_counter = datetime.timedelta(hours=6).seconds
 
         # Paper reading
         self.paper_path = Path(
@@ -43,6 +46,9 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         self.paper_info = PaperInfo()
         self.paper_info.got_data.connect(self.save_paper_data)
         self.ui.paper_button.clicked.connect(self.paper_reading_popup)
+        self.zot = zotero.Zotero('6928401', 'user', 'tWkNdtZH1tr9Z3AYs2iX0IIr')
+        # zot.item('ARIJYDQQ') In zotero right click -> copy URI, the end is the itemID
+        # https://pyzotero.readthedocs.io/en/latest/#zotero.Zotero.item
 
         # Flash card stuff
         self.anki_subject = AnkiSubject()
@@ -53,35 +59,46 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
     def daily_setup(self):
         utils.open_website_on_i3_screen(1, "https://www.ticktick.com")
         utils.open_website("https://mail.google.com/mail/u/1")
-
-    def start_deep_work_timing(self) -> None:
-        # self.ui.deep_work_button.setEnabled(False)
-        if self.deep_work_start == False:
-            self.deep_work_counter = datetime.timedelta(minutes=90).seconds
-            self.deep_work_start = True
+        self.work_counter = datetime.timedelta(hours=6).seconds
+        if self.work_start is False:
+            self.work_start = True
         else:
-            print('Not done with current timer')
+            print('Already started')
 
-    def show_deep_work_timing(self) -> None:
-        if self.deep_work_start:
-            self.deep_work_counter -= 1
-            if self.deep_work_counter == 0:
+    def start_work_timing(self) -> None:
+        # self.ui.work_button.setEnabled(False)
+        if self.work_start is False:
+            self.work_start = True
+        else:
+            print('Already started')
+
+    def stop_work_timing(self) -> None:
+        # self.ui.work_button.setEnabled(False)
+        if self.work_start is True:
+            self.work_start = False
+        else:
+            print('Already stopped')
+
+    def show_work_timing(self) -> None:
+        if self.work_start:
+            self.work_counter -= 1
+            if self.work_counter == 0:
                 # timing completed
-                self.ui.deep_work_label.setText("Done")
+                self.ui.work_label.setText("Done")
                 Notification(
-                    title="Deep work is done",
-                    description="You should go do something for a few minutes, good job!",
+                    title="Work is done for today",
+                    description="Good shit my dude",
                     duration=10,
                     urgency="critical",
                 ).send()
-                self.deep_work_start = False
-            self.ui.deep_work_label.setText(
-                f"{datetime.timedelta(seconds = self.deep_work_counter)} s"
+                self.work_start = False
+            self.ui.work_label.setText(
+                f"{datetime.timedelta(seconds = self.work_counter)} s"
             )
 
     def paper_reading_popup(self) -> None:
         utils.open_i3_screen(5)
-        subprocess.Popen("/usr/bin/mendeleydesktop")
+        subprocess.Popen("/usr/bin/zotero")
         time.sleep(1)
 
         self.paper_info.show()
@@ -90,13 +107,17 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         # I need the paper title, author, and year
 
     def save_paper_data(
-        self, field: str, title: str, authors: str, journal: str, year: str, tags: str
+        self, uri: str, field: str, title: str, authors: str, journal: str, year: str, tags: str
     ) -> None:
         """
         After the pop-up window is closed it will trigger this which saves all
         of the data and then calls the function that opens the tex file to
         write notes in
         """
+        self.paper_uri = uri
+        itemID = uri.split('/')[-1]
+        item_info = self.zot.item(itemID)
+        self.paper_data = item_info['data']
         self.paper_field = field
         self.paper_title = title
         self.paper_authors = authors
@@ -112,19 +133,19 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         # So it needs to make the field folder if it doesn't exist, if that's
         # the case then it also needs to write in the main.tex document an
         # \input{field/field.tex}
-        self.paper_field_path = Path(
+        paper_field_path = Path(
             self.paper_path, self.paper_field.lower().replace(" ", "_")
         )
-        self.paper_field_tex_path = Path(
-            self.paper_field_path, self.paper_field.lower()
+        paper_field_tex_path = Path(
+            paper_field_path, self.paper_field.lower()
         ).with_suffix(".tex")
-        if not self.paper_field_tex_path.exists():
+        if not paper_field_tex_path.exists():
             # Make the directory and primary tex file for the field if it doesn't exist
-            self.paper_field_path.mkdir(parents=True, exist_ok=True)
+            paper_field_path.mkdir(parents=True, exist_ok=True)
 
             # Create the paper_notes/field/field.tex file
             field_tex_str = f"\chapter{{{self.paper_field.capitalize()}}}"
-            with open(self.paper_field_tex_path, "w") as tex_file:
+            with open(paper_field_tex_path, "w") as tex_file:
                 tex_file.write(field_tex_str)
 
             # Then input that chapter to the main.tex file
@@ -144,52 +165,72 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
             with open(main_tex_file_path, "w") as main_tex_file:
                 main_tex_file.writelines(main_tex_lines)
 
-        # Make for the paper specific information, starting with making the tex file
-        self.paper_first_author = self.paper_authors.split("\n")[0].split(",")[0]
+        # Get paper author information
+        paper_authors = self.paper_data['creators']
+        author_str = ''
+        for i, author in enumerate(paper_authors):
+            if i==0:
+                paper_first_author = author['lastName']
+            if i+1 == len(paper_authors):
+                author_str += f"{author['firstName']} {author['lastName']}"             
+            else:
+                author_str += f"{author['firstName']} {author['lastName']}, "
 
+        paper_title = self.paper_data['title']
+        paper_year = self.paper_data['date'].split('-')[0]
+        journal = self.paper_data['publicationTitle']
+        tags = self.paper_data['tags']
+        tags_str = ''
+        for i, tag in enumerate( tags ):
+            if i+1 == len(tags):
+                tags_str += tag['tag']
+            else:
+                tags_str += f"{tag['tag']}, "
+        paper_abstract = self.paper_data['abstractNote']
+        paper_doi = self.paper_data['DOI']
         # Now to abbreviate the title and create the filename
-        paper_title_cut = self.paper_title[:60].lower().replace(" ", "_")
-        self.paper_title_abbrev = re.sub(r"[^\w\s]", "", paper_title_cut)
-        self.paper_tex_filename = (
-            f"{self.paper_first_author}_{self.paper_year}_{self.paper_title_abbrev}.tex"
+        paper_title_cut = paper_title[:60].lower().replace(" ", "_")
+        paper_title_abbrev = re.sub(r"[^\w\s]", "", paper_title_cut)
+        paper_tex_filename = (
+            f"{paper_first_author}_{paper_year}_{paper_title_abbrev}.tex"
         )
-        self.paper_tex_filename_path = Path(
-            self.paper_field_path, self.paper_tex_filename
+        paper_tex_filename_path = Path(
+            paper_field_path, paper_tex_filename
         )
 
         # Now set up the formatting for what we'll write to the file before opening it
         # Rewriting the names in first last order, god that's ugly
-        self.paper_authors_first_last = "".join(
-            [
-                f"{first} {last},"
-                for last, first in [
-                    name.split(",") for name in self.paper_authors.split("\n")
-                ]
-            ]
-        )[1:-1]
-        raw_paper_write_lines = f"\\newpage\n\paper{{{self.paper_title}}}\n\paperauthor{{{self.paper_authors_first_last}}}\n\paperjournal{{{self.paper_journal}}}\n\paperyear{{{self.paper_year}}}\n\papertags{{{self.paper_tags}}}\n\\reviewdate{{{datetime.date.today().strftime('%A, %B %d %Y')}}}\n\section{{Summary of paper}}\n"
+        # self.paper_authors_first_last = "".join(
+            # [
+                # f"{first} {last},"
+                # for last, first in [
+                    # name.split(",") for name in self.paper_authors.split("\n")
+                # ]
+            # ]
+        # )[1:-1]
+        raw_paper_write_lines = f"\\newpage\n\paper{{{paper_title}}}\n\paperauthor{{{author_str}}}\n\paperjournal{{{journal}}}\n\paperyear{{{paper_year}}}\n\papertags{{{tags_str}}}\n\\reviewdate{{{datetime.date.today().strftime('%A, %B %d %Y')}}}\n\DOI{{{paper_doi}}}\n\\abstractsmall{{{paper_abstract}}}\n\section{{Summary of paper}}\n"
 
         # Use regex to escape the latex symbols that need to be escaped
         escaped_symbols = r"(?=[&%$#_~^])"
-        self.paper_write_lines = re.sub(escaped_symbols, r"\\", raw_paper_write_lines)
+        paper_write_lines = re.sub(escaped_symbols, r"\\", raw_paper_write_lines)
 
         # Write that to the file
-        with open(self.paper_tex_filename_path, "w") as paper_file:
-            paper_file.writelines(self.paper_write_lines)
+        with open(paper_tex_filename_path, "w") as paper_file:
+            paper_file.writelines(paper_write_lines)
 
         # Now add that file into the field/field.tex file
-        with open(self.paper_field_tex_path, "r") as paper_field_file:
+        with open(paper_field_tex_path, "r") as paper_field_file:
             paper_field_lines = paper_field_file.readlines()
 
         paper_field_lines.append(
-            f"\n\input{{{self.paper_field.lower()}/{self.paper_tex_filename}}}"
+            f"\n\input{{{self.paper_field.lower()}/{paper_tex_filename}}}"
         )
-        with open(self.paper_field_tex_path, "w") as paper_field_file:
+        with open(paper_field_tex_path, "w") as paper_field_file:
             paper_field_file.writelines(paper_field_lines)
 
         # Now open up the created file in vim for editing
         os.system(
-            f"gnome-terminal -e 'bash -c \"nvim {self.paper_tex_filename_path}; exec bash\"'"
+            f"gnome-terminal -e 'bash -c \"nvim {paper_tex_filename_path}; exec bash\"'"
         )
         pyautogui.press("G")
         pyautogui.press("o")

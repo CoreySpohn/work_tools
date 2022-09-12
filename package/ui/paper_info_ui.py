@@ -19,67 +19,69 @@ class Ui_Form(object):
         self.formLayout.setObjectName("formLayout")
         self.paper_title_label = QtWidgets.QLabel(Form)
         self.paper_title_label.setObjectName("paper_title_label")
-        self.formLayout.setWidget(
-            0, QtWidgets.QFormLayout.LabelRole, self.paper_title_label
-        )
-        self.paper_author_label = QtWidgets.QLabel(Form)
-        self.paper_author_label.setObjectName("paper_author_label")
-        self.formLayout.setWidget(
-            1, QtWidgets.QFormLayout.LabelRole, self.paper_author_label
-        )
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.paper_title_label)
+        self.paper_authors_label = QtWidgets.QLabel(Form)
+        self.paper_authors_label.setObjectName("paper_authors_label")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.paper_authors_label)
         self.paper_year_label = QtWidgets.QLabel(Form)
         self.paper_year_label.setObjectName("paper_year_label")
-        self.formLayout.setWidget(
-            2, QtWidgets.QFormLayout.LabelRole, self.paper_year_label
-        )
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.paper_year_label)
         self.paper_title_line_edit = QtWidgets.QLineEdit(Form)
         self.paper_title_line_edit.setObjectName("paper_title_line_edit")
-        self.formLayout.setWidget(
-            0, QtWidgets.QFormLayout.FieldRole, self.paper_title_line_edit
-        )
-        self.paper_author_line_edit = QtWidgets.QLineEdit(Form)
-        self.paper_author_line_edit.setObjectName("paper_author_line_edit")
-        self.formLayout.setWidget(
-            1, QtWidgets.QFormLayout.FieldRole, self.paper_author_line_edit
-        )
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.paper_title_line_edit)
+        self.paper_authors_line_edit = QtWidgets.QLineEdit(Form)
+        self.paper_authors_line_edit.setObjectName("paper_authors_line_edit")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.paper_authors_line_edit)
         self.paper_year_line_edit = QtWidgets.QLineEdit(Form)
         self.paper_year_line_edit.setObjectName("paper_year_line_edit")
-        self.formLayout.setWidget(
-            2, QtWidgets.QFormLayout.FieldRole, self.paper_year_line_edit
-        )
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.paper_year_line_edit)
+        self.paper_field_label = QtWidgets.QLabel(Form)
+        self.paper_field_label.setObjectName("paper_field_label")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.paper_field_label)
+        self.paper_field_line_edit = QtWidgets.QLineEdit(Form)
+        self.paper_field_line_edit.setObjectName("paper_field_line_edit")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.paper_field_line_edit)
+        self.paper_journal_label = QtWidgets.QLabel(Form)
+        self.paper_journal_label.setObjectName("paper_journal_label")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.paper_journal_label)
+        self.paper_journal_line_edit = QtWidgets.QLineEdit(Form)
+        self.paper_journal_line_edit.setObjectName("paper_journal_line_edit")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.paper_journal_line_edit)
+        self.paper_tags_label = QtWidgets.QLabel(Form)
+        self.paper_tags_label.setObjectName("paper_tags_label")
+        self.formLayout.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.paper_tags_label)
+        self.paper_tags_line_edit = QtWidgets.QLineEdit(Form)
+        self.paper_tags_line_edit.setObjectName("paper_tags_line_edit")
+        self.formLayout.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.paper_tags_line_edit)
         self.done_button = QtWidgets.QPushButton(Form)
+        self.done_button.setAutoDefault(True)
+        self.done_button.setDefault(True)
         self.done_button.setObjectName("done_button")
-        self.formLayout.setWidget(
-            5, QtWidgets.QFormLayout.SpanningRole, self.done_button
-        )
-        self.field_label = QtWidgets.QLabel(Form)
-        self.field_label.setObjectName("field_label")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.field_label)
-        self.field_line_edit = QtWidgets.QLineEdit(Form)
-        self.field_line_edit.setObjectName("field_line_edit")
-        self.formLayout.setWidget(
-            3, QtWidgets.QFormLayout.FieldRole, self.field_line_edit
-        )
-        self.subfield_label = QtWidgets.QLabel(Form)
-        self.subfield_label.setObjectName("subfield_label")
-        self.formLayout.setWidget(
-            4, QtWidgets.QFormLayout.LabelRole, self.subfield_label
-        )
-        self.subfield_line_edit = QtWidgets.QLineEdit(Form)
-        self.subfield_line_edit.setObjectName("subfield_line_edit")
-        self.formLayout.setWidget(
-            4, QtWidgets.QFormLayout.FieldRole, self.subfield_line_edit
-        )
+        self.formLayout.setWidget(8, QtWidgets.QFormLayout.SpanningRole, self.done_button)
+        self.paper_uri_label = QtWidgets.QLabel(Form)
+        self.paper_uri_label.setObjectName("paper_uri_label")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.paper_uri_label)
+        self.paper_uri_line_edit = QtWidgets.QLineEdit(Form)
+        self.paper_uri_line_edit.setObjectName("paper_uri_line_edit")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.paper_uri_line_edit)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+        Form.setTabOrder(self.paper_field_line_edit, self.paper_title_line_edit)
+        Form.setTabOrder(self.paper_title_line_edit, self.paper_authors_line_edit)
+        Form.setTabOrder(self.paper_authors_line_edit, self.paper_journal_line_edit)
+        Form.setTabOrder(self.paper_journal_line_edit, self.paper_year_line_edit)
+        Form.setTabOrder(self.paper_year_line_edit, self.paper_tags_line_edit)
+        Form.setTabOrder(self.paper_tags_line_edit, self.done_button)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.paper_title_label.setText(_translate("Form", "Title"))
-        self.paper_author_label.setText(_translate("Form", "Author"))
+        self.paper_authors_label.setText(_translate("Form", "Authors"))
         self.paper_year_label.setText(_translate("Form", "Year"))
+        self.paper_field_label.setText(_translate("Form", "Field"))
+        self.paper_journal_label.setText(_translate("Form", "Journal"))
+        self.paper_tags_label.setText(_translate("Form", "Tags"))
         self.done_button.setText(_translate("Form", "Done"))
-        self.field_label.setText(_translate("Form", "Field"))
-        self.subfield_label.setText(_translate("Form", "Subfield"))
+        self.paper_uri_label.setText(_translate("Form", "URI"))

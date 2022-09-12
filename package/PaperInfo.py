@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets as qtw
 
 
 class PaperInfo(qtw.QWidget):
-    got_data = qtc.pyqtSignal(str, str, str, str, str, str)
+    got_data = qtc.pyqtSignal(str, str, str, str, str, str, str)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,6 +28,7 @@ class PaperInfo(qtw.QWidget):
         self.pi_ui.paper_field_line_edit.setCompleter(self.completer)
 
     def collect_paper_info(self) -> None:
+        self.uri = self.pi_ui.paper_uri_line_edit.text()
         self.field = self.pi_ui.paper_field_line_edit.text()
         self.title = self.pi_ui.paper_title_line_edit.text()
         self.authors = self.pi_ui.paper_authors_line_edit.text()
@@ -35,5 +36,5 @@ class PaperInfo(qtw.QWidget):
         self.year = self.pi_ui.paper_year_line_edit.text()
         self.tags = self.pi_ui.paper_tags_line_edit.text()
         self.got_data.emit(
-            self.field, self.title, self.authors, self.journal, self.year, self.tags
+            self.uri, self.field, self.title, self.authors, self.journal, self.year, self.tags
         )
