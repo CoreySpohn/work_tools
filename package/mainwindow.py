@@ -2,20 +2,20 @@ import datetime
 import os
 import re
 import subprocess
-import sys
 import time
 from pathlib import Path
 
-import package.utils as utils
 import pyautogui
-from package.AnkiSubject import AnkiSubject
-from package.PaperInfo import PaperInfo
-from package.ui.mainwindow_ui import Ui_Form
 from pynotifier import Notification
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtWidgets as qtw
 from pyzotero import zotero
+
+import package.utils as utils
+from package.AnkiSubject import AnkiSubject
+from package.PaperInfo import PaperInfo
+from package.ui.mainwindow_ui import Ui_Form
 
 
 class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widget above
@@ -40,13 +40,12 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         self.work_counter = datetime.timedelta(hours=6).seconds
 
         # Paper reading
-        self.paper_path = Path(
-            Path.home(), "Documents/github/research-notes/paper_notes"
-        )
+        self.paper_path = Path(Path.home(), ".vault/research/reading")
+        self.paper_path.mkdir(parents=True, exist_ok=True)
         self.paper_info = PaperInfo()
         self.paper_info.got_data.connect(self.save_paper_data)
         self.ui.paper_button.clicked.connect(self.paper_reading_popup)
-        self.zot = zotero.Zotero('6928401', 'user', 'tWkNdtZH1tr9Z3AYs2iX0IIr')
+        self.zot = zotero.Zotero("6928401", "user", "tWkNdtZH1tr9Z3AYs2iX0IIr")
         # zot.item('ARIJYDQQ') In zotero right click -> copy URI, the end is the itemID
         # https://pyzotero.readthedocs.io/en/latest/#zotero.Zotero.item
 
@@ -63,21 +62,21 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         if self.work_start is False:
             self.work_start = True
         else:
-            print('Already started')
+            print("Already started")
 
     def start_work_timing(self) -> None:
         # self.ui.work_button.setEnabled(False)
         if self.work_start is False:
             self.work_start = True
         else:
-            print('Already started')
+            print("Already started")
 
     def stop_work_timing(self) -> None:
         # self.ui.work_button.setEnabled(False)
         if self.work_start is True:
             self.work_start = False
         else:
-            print('Already stopped')
+            print("Already stopped")
 
     def show_work_timing(self) -> None:
         if self.work_start:
@@ -103,11 +102,19 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
 
         self.paper_info.show()
         # After opening mendeley open a pop-up for when the paper has been found
-        # Then it'll get the paper information from mendeley so that it can write it into the tex files
+        # Then it'll get the paper information from mendeley so that it can write
+        # it into the tex files
         # I need the paper title, author, and year
 
     def save_paper_data(
-        self, uri: str, field: str, title: str, authors: str, journal: str, year: str, tags: str
+        self,
+        uri: str,
+        field: str,
+        title: str,
+        authors: str,
+        journal: str,
+        year: str,
+        tags: str,
     ) -> None:
         """
         After the pop-up window is closed it will trigger this which saves all
@@ -115,9 +122,9 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         write notes in
         """
         self.paper_uri = uri
-        itemID = uri.split('/')[-1]
+        itemID = uri.split("/")[-1]
         item_info = self.zot.item(itemID)
-        self.paper_data = item_info['data']
+        self.paper_data = item_info["data"]
         self.paper_field = field
         self.paper_title = title
         self.paper_authors = authors
@@ -129,129 +136,152 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
 
     def handle_paper_tex_files(self) -> None:
         utils.open_i3_screen(5)
-        # TODO Figure out alll the places I need references in the paper-notes repository
+        # TODO Figure out alll the places I need references in the paper-notes repositor
         # So it needs to make the field folder if it doesn't exist, if that's
         # the case then it also needs to write in the main.tex document an
         # \input{field/field.tex}
-        paper_field_path = Path(
-            self.paper_path, self.paper_field.lower().replace(" ", "_")
-        )
-        paper_field_tex_path = Path(
-            paper_field_path, self.paper_field.lower()
-        ).with_suffix(".tex")
-        if not paper_field_tex_path.exists():
-            # Make the directory and primary tex file for the field if it doesn't exist
-            paper_field_path.mkdir(parents=True, exist_ok=True)
+        # paper_field_path = Path(
+        #     self.paper_path, self.paper_field.lower().replace(" ", "_")
+        # )
+        # paper_field_tex_path = Path(
+        #     paper_field_path, self.paper_field.lower()
+        # ).with_suffix(".tex")
+        # if not paper_field_tex_path.exists():
+        # Make the directory and primary tex file for the field if it doesn't exist
+        # paper_field_path.mkdir(parents=True, exist_ok=True)
 
-            # Create the paper_notes/field/field.tex file
-            field_tex_str = f"\chapter{{{self.paper_field.capitalize()}}}"
-            with open(paper_field_tex_path, "w") as tex_file:
-                tex_file.write(field_tex_str)
+        # Create the paper_notes/field/field.tex file
+        # field_tex_str = f"\chapter{{{self.paper_field.capitalize()}}}"
+        # with open(paper_field_tex_path, "w") as tex_file:
+        #     tex_file.write(field_tex_str)
 
-            # Then input that chapter to the main.tex file
-            main_tex_file_path = Path(self.paper_path, "main.tex")
-            with open(main_tex_file_path, "r") as main_tex_file:
-                main_tex_lines = main_tex_file.readlines()
+        # Then input that chapter to the main.tex file
+        # main_tex_file_path = Path(self.paper_path, "main.tex")
+        # with open(main_tex_file_path, "r") as main_tex_file:
+        #     main_tex_lines = main_tex_file.readlines()
 
-            # After loading all of the lines duplicate the last line (end
-            # document), and then above the end of the document write the line
-            # inputting the new section
-            main_tex_lines.append(main_tex_lines[-1])
-            main_tex_lines[
-                -2
-            ] = f"\input{{{self.paper_field.lower()}/{self.paper_field.lower()}.tex}}\n"
+        # After loading all of the lines duplicate the last line (end
+        # document), and then above the end of the document write the line
+        # inputting the new section
+        # main_tex_lines.append(main_tex_lines[-1])
+        # main_tex_lines[
+        #     -2
+        # ] = f"\input{{{self.paper_field.lower()}/{self.paper_field.lower()}.tex}}\n"
 
-            # Write changes to main.tex
-            with open(main_tex_file_path, "w") as main_tex_file:
-                main_tex_file.writelines(main_tex_lines)
+        # Write changes to main.tex
+        # with open(main_tex_file_path, "w") as main_tex_file:
+        #     main_tex_file.writelines(main_tex_lines)
 
         # Get paper author information
-        paper_authors = self.paper_data['creators']
-        author_str = ''
+        paper_authors = self.paper_data["creators"]
+        author_str = ""
         for i, author in enumerate(paper_authors):
-            if i==0:
-                paper_first_author = author['lastName']
-            if i+1 == len(paper_authors):
-                author_str += f"{author['firstName']} {author['lastName']}"             
+            if i + 1 == len(paper_authors):
+                author_str += f"[[{author['firstName']} {author['lastName']}]]"
             else:
-                author_str += f"{author['firstName']} {author['lastName']}, "
+                author_str += f"[[{author['firstName']} {author['lastName']}]], "
 
-        paper_title = self.paper_data['title']
-        paper_year = self.paper_data['date'].split('-')[0]
-        journal = self.paper_data['publicationTitle']
-        tags = self.paper_data['tags']
-        tags_str = ''
-        for i, tag in enumerate( tags ):
-            if i+1 == len(tags):
-                tags_str += tag['tag']
+        paper_title = self.paper_data["title"]
+        paper_year = self.paper_data["date"].split("-")[0]
+        journal = self.paper_data["publicationTitle"]
+        tags = self.paper_data["tags"]
+        tags_str = ""
+        for i, tag in enumerate(tags):
+            if i + 1 == len(tags):
+                tags_str += f"[[{tag['tag']}]]"
             else:
-                tags_str += f"{tag['tag']}, "
-        paper_abstract = self.paper_data['abstractNote']
-        paper_doi = self.paper_data['DOI']
+                tags_str += f"[[{tag['tag']}]], "
+        paper_abstract = self.paper_data["abstractNote"]
+        paper_doi = self.paper_data["DOI"]
         # Now to abbreviate the title and create the filename
-        paper_title_cut = paper_title[:60].lower().replace(" ", "_")
-        paper_title_abbrev = re.sub(r"[^\w\s]", "", paper_title_cut)
-        paper_tex_filename = (
-            f"{paper_first_author}_{paper_year}_{paper_title_abbrev}.tex"
-        )
-        paper_tex_filename_path = Path(
-            paper_field_path, paper_tex_filename
-        )
+        # paper_title_cut = paper_title[:60].lower().replace(" ", "_")
+        # paper_title_abbrev = re.sub(r"[^\w\s]", "", paper_title_cut)
+        paper_filename = f"{paper_title}.md"
+        # paper_filename = f"{paper_first_author}_{paper_year}_{paper_title_abbrev}.md"
+        paper_filename_path = Path(self.paper_path, paper_filename)
 
         # Now set up the formatting for what we'll write to the file before opening it
         # Rewriting the names in first last order, god that's ugly
         # self.paper_authors_first_last = "".join(
-            # [
-                # f"{first} {last},"
-                # for last, first in [
-                    # name.split(",") for name in self.paper_authors.split("\n")
-                # ]
-            # ]
+        # [
+        # f"{first} {last},"
+        # for last, first in [
+        # name.split(",") for name in self.paper_authors.split("\n")
+        # ]
+        # ]
         # )[1:-1]
-        raw_paper_write_lines = f"\\newpage\n\paper{{{paper_title}}}\n\paperauthor{{{author_str}}}\n\paperjournal{{{journal}}}\n\paperyear{{{paper_year}}}\n\papertags{{{tags_str}}}\n\\reviewdate{{{datetime.date.today().strftime('%A, %B %d %Y')}}}\n\DOI{{{paper_doi}}}\n\\abstractsmall{{{paper_abstract}}}\n\section{{Summary of paper}}\n"
+        raw_paper_write_lines = (
+            "---\n"
+            f"tags: paper\n"
+            f"aliases: {paper_title}\n"
+            f"cssclass: null\n"
+            f"abstract: {paper_abstract}\n"
+            "---\n"
+            f"# {paper_title}\n"
+            "\n"
+            "---\n"
+            "\n"
+            f"Title:: {paper_title}\n"
+            f"Author:: {author_str}\n"
+            f"Journal:: [[{journal}]]\n"
+            f"Year:: {paper_year}\n"
+            f"Tags:: {tags_str}\n"
+            f"DOI:: {paper_doi}\n"
+            f"ReviewedDate:: {datetime.date.today().strftime('%A, %B %d %Y')}\n"
+            "\n---\n\n"
+            f"## Abstract\n{paper_abstract}\n\n"
+            "## Summary of key points\n"
+            "-\n\n"
+            "## Other Comments\n-\n\n"
+            "## Interesting Cited References\n-\n"
+        )
 
         # Use regex to escape the latex symbols that need to be escaped
-        escaped_symbols = r"(?=[&%$#_~^])"
+        escaped_symbols = r"(?=[&%$_~^])"
         paper_write_lines = re.sub(escaped_symbols, r"\\", raw_paper_write_lines)
 
         # Write that to the file
-        with open(paper_tex_filename_path, "w") as paper_file:
+        with open(paper_filename_path, "w") as paper_file:
             paper_file.writelines(paper_write_lines)
 
         # Now add that file into the field/field.tex file
-        with open(paper_field_tex_path, "r") as paper_field_file:
-            paper_field_lines = paper_field_file.readlines()
+        # with open(paper_field_path, "r") as paper_field_file:
+        #     paper_field_lines = paper_field_file.readlines()
 
-        paper_field_lines.append(
-            f"\n\input{{{self.paper_field.lower()}/{paper_tex_filename}}}"
-        )
-        with open(paper_field_tex_path, "w") as paper_field_file:
-            paper_field_file.writelines(paper_field_lines)
+        # paper_field_lines.append(
+        #     f"\n\input{{{self.paper_field.lower()}/{paper_tex_filename}}}"
+        # )
+        # with open(paper_field_tex_path, "w") as paper_field_file:
+        #     paper_field_file.writelines(paper_field_lines)
 
         # Now open up the created file in vim for editing
-        os.system(
-            f"gnome-terminal -e 'bash -c \"nvim {paper_tex_filename_path}; exec bash\"'"
-        )
-        pyautogui.press("G")
-        pyautogui.press("o")
+        # os.system(
+        #     f"gnome-terminal -e 'bash -c \"lvim {paper_filename_path}; exec bash\"'"
+        # )
+        # pyautogui.press("G")
+        # pyautogui.press("o")
 
     def anki_subject_popup(self) -> None:
         """
-        This goes to the proper i3 screen and opens up a menu to select the study subject
+        This goes to the proper i3 screen and opens up a menu to select the study
+        subject
         """
         utils.open_i3_screen(7)
         self.anki_subject.show()
 
     def write_flash_cards(self, subject: str) -> None:
         """
-        This opens after the self.anki_subject popup done button is clicked thanks to the
-        self.anki_subject.got_subject.connect(self.write_flash_cards)
+        This opens after the self.anki_subject popup done button is clicked thanks to
+        the self.anki_subject.got_subject.connect(self.write_flash_cards)
         line. Then it opens that subject
         """
         self.anki_subject.close()
         self.anki_subject_str = subject
         os.system(
-            f"gnome-terminal -e 'bash -c \"anki-vim {self.anki_subject_str}; exec bash\"'"
+            (
+                "gnome-terminal -e 'bash -c \"anki-vim "
+                f"{self.anki_subject_str}; exec bash\"'"
+            )
         )
 
     def add_flash_cards_to_anki(self) -> None:
