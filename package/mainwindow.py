@@ -98,12 +98,13 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
     def paper_reading_popup(self) -> None:
         utils.open_i3_screen(5)
         subprocess.Popen("/usr/bin/zotero")
+        subprocess.Popen("/usr/bin/obsidian")
         time.sleep(1)
 
         self.paper_info.show()
         # After opening mendeley open a pop-up for when the paper has been found
         # Then it'll get the paper information from mendeley so that it can write
-        # it into the tex files
+        # it into the md files
         # I need the paper title, author, and year
 
     def save_paper_data(
@@ -118,7 +119,7 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
     ) -> None:
         """
         After the pop-up window is closed it will trigger this which saves all
-        of the data and then calls the function that opens the tex file to
+        of the data and then calls the function that opens the md file to
         write notes in
         """
         self.paper_uri = uri
@@ -132,45 +133,10 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         self.paper_year = year
         self.paper_tags = tags
         self.paper_info.close()
-        self.handle_paper_tex_files()
+        self.handle_paper_files()
 
-    def handle_paper_tex_files(self) -> None:
+    def handle_paper_files(self) -> None:
         utils.open_i3_screen(5)
-        # TODO Figure out alll the places I need references in the paper-notes repositor
-        # So it needs to make the field folder if it doesn't exist, if that's
-        # the case then it also needs to write in the main.tex document an
-        # \input{field/field.tex}
-        # paper_field_path = Path(
-        #     self.paper_path, self.paper_field.lower().replace(" ", "_")
-        # )
-        # paper_field_tex_path = Path(
-        #     paper_field_path, self.paper_field.lower()
-        # ).with_suffix(".tex")
-        # if not paper_field_tex_path.exists():
-        # Make the directory and primary tex file for the field if it doesn't exist
-        # paper_field_path.mkdir(parents=True, exist_ok=True)
-
-        # Create the paper_notes/field/field.tex file
-        # field_tex_str = f"\chapter{{{self.paper_field.capitalize()}}}"
-        # with open(paper_field_tex_path, "w") as tex_file:
-        #     tex_file.write(field_tex_str)
-
-        # Then input that chapter to the main.tex file
-        # main_tex_file_path = Path(self.paper_path, "main.tex")
-        # with open(main_tex_file_path, "r") as main_tex_file:
-        #     main_tex_lines = main_tex_file.readlines()
-
-        # After loading all of the lines duplicate the last line (end
-        # document), and then above the end of the document write the line
-        # inputting the new section
-        # main_tex_lines.append(main_tex_lines[-1])
-        # main_tex_lines[
-        #     -2
-        # ] = f"\input{{{self.paper_field.lower()}/{self.paper_field.lower()}.tex}}\n"
-
-        # Write changes to main.tex
-        # with open(main_tex_file_path, "w") as main_tex_file:
-        #     main_tex_file.writelines(main_tex_lines)
 
         # Get paper author information
         paper_authors = self.paper_data["creators"]
@@ -193,23 +159,11 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
                 tags_str += f"[[{tag['tag']}]], "
         paper_abstract = self.paper_data["abstractNote"]
         paper_doi = self.paper_data["DOI"]
-        # Now to abbreviate the title and create the filename
-        # paper_title_cut = paper_title[:60].lower().replace(" ", "_")
-        # paper_title_abbrev = re.sub(r"[^\w\s]", "", paper_title_cut)
         paper_filename = f"{paper_title}.md"
-        # paper_filename = f"{paper_first_author}_{paper_year}_{paper_title_abbrev}.md"
         paper_filename_path = Path(self.paper_path, paper_filename)
 
         # Now set up the formatting for what we'll write to the file before opening it
         # Rewriting the names in first last order, god that's ugly
-        # self.paper_authors_first_last = "".join(
-        # [
-        # f"{first} {last},"
-        # for last, first in [
-        # name.split(",") for name in self.paper_authors.split("\n")
-        # ]
-        # ]
-        # )[1:-1]
         raw_paper_write_lines = (
             "---\n"
             f"tags: paper\n"
