@@ -98,7 +98,6 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
     def paper_reading_popup(self) -> None:
         utils.open_i3_screen(5)
         subprocess.Popen("/usr/bin/zotero")
-        subprocess.Popen("/usr/bin/obsidian")
         time.sleep(1)
 
         self.paper_info.show()
@@ -110,12 +109,6 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
     def save_paper_data(
         self,
         uri: str,
-        field: str,
-        title: str,
-        authors: str,
-        journal: str,
-        year: str,
-        tags: str,
     ) -> None:
         """
         After the pop-up window is closed it will trigger this which saves all
@@ -126,12 +119,6 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         itemID = uri.split("/")[-1]
         item_info = self.zot.item(itemID)
         self.paper_data = item_info["data"]
-        self.paper_field = field
-        self.paper_title = title
-        self.paper_authors = authors
-        self.paper_journal = journal
-        self.paper_year = year
-        self.paper_tags = tags
         self.paper_info.close()
         self.handle_paper_files()
 
@@ -197,23 +184,6 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         # Write that to the file
         with open(paper_filename_path, "w") as paper_file:
             paper_file.writelines(paper_write_lines)
-
-        # Now add that file into the field/field.tex file
-        # with open(paper_field_path, "r") as paper_field_file:
-        #     paper_field_lines = paper_field_file.readlines()
-
-        # paper_field_lines.append(
-        #     f"\n\input{{{self.paper_field.lower()}/{paper_tex_filename}}}"
-        # )
-        # with open(paper_field_tex_path, "w") as paper_field_file:
-        #     paper_field_file.writelines(paper_field_lines)
-
-        # Now open up the created file in vim for editing
-        # os.system(
-        #     f"gnome-terminal -e 'bash -c \"lvim {paper_filename_path}; exec bash\"'"
-        # )
-        # pyautogui.press("G")
-        # pyautogui.press("o")
 
     def anki_subject_popup(self) -> None:
         """

@@ -1,13 +1,14 @@
 from pathlib import Path
 
-from package.ui.paper_info_ui import Ui_Form as PaperInfo_Ui_Form
 from PyQt5 import QtCore as qtc
 from PyQt5 import QtGui as qtg
 from PyQt5 import QtWidgets as qtw
 
+from package.ui.paper_info_ui import Ui_Form as PaperInfo_Ui_Form
+
 
 class PaperInfo(qtw.QWidget):
-    got_data = qtc.pyqtSignal(str, str, str, str, str, str, str)
+    got_data = qtc.pyqtSignal(str)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,16 +26,14 @@ class PaperInfo(qtw.QWidget):
             if field not in ignored_dirs:
                 self.field_autocomplete_model.appendRow(qtg.QStandardItem(field))
         self.completer = qtw.QCompleter(self.field_autocomplete_model, self)
-        self.pi_ui.paper_field_line_edit.setCompleter(self.completer)
+        self.pi_ui.paper_uri_line_edit.setCompleter(self.completer)
 
     def collect_paper_info(self) -> None:
         self.uri = self.pi_ui.paper_uri_line_edit.text()
-        self.field = self.pi_ui.paper_field_line_edit.text()
-        self.title = self.pi_ui.paper_title_line_edit.text()
-        self.authors = self.pi_ui.paper_authors_line_edit.text()
-        self.journal = self.pi_ui.paper_journal_line_edit.text()
-        self.year = self.pi_ui.paper_year_line_edit.text()
-        self.tags = self.pi_ui.paper_tags_line_edit.text()
-        self.got_data.emit(
-            self.uri, self.field, self.title, self.authors, self.journal, self.year, self.tags
-        )
+        # self.field = self.pi_ui.paper_field_line_edit.text()
+        # self.title = self.pi_ui.paper_title_line_edit.text()
+        # self.authors = self.pi_ui.paper_authors_line_edit.text()
+        # self.journal = self.pi_ui.paper_journal_line_edit.text()
+        # self.year = self.pi_ui.paper_year_line_edit.text()
+        # self.tags = self.pi_ui.paper_tags_line_edit.text()
+        self.got_data.emit(self.uri)

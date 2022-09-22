@@ -14,67 +14,17 @@
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <item row="2" column="0">
-    <widget class="QLabel" name="paper_title_label">
+   <item row="0" column="0">
+    <widget class="QLabel" name="paper_uri_label">
      <property name="text">
-      <string>Title</string>
+      <string>URI</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="paper_authors_label">
-     <property name="text">
-      <string>Authors</string>
-     </property>
-    </widget>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="paper_uri_line_edit"/>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="paper_year_label">
-     <property name="text">
-      <string>Year</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="paper_title_line_edit"/>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="paper_authors_line_edit"/>
-   </item>
-   <item row="5" column="1">
-    <widget class="QLineEdit" name="paper_year_line_edit"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="paper_field_label">
-     <property name="text">
-      <string>Field</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="paper_field_line_edit"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="paper_journal_label">
-     <property name="text">
-      <string>Journal</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QLineEdit" name="paper_journal_line_edit"/>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="paper_tags_label">
-     <property name="text">
-      <string>Tags</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QLineEdit" name="paper_tags_line_edit"/>
-   </item>
-   <item row="8" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QPushButton" name="done_button">
      <property name="text">
       <string>Done</string>
@@ -87,25 +37,9 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="paper_uri_label">
-     <property name="text">
-      <string>URI</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="paper_uri_line_edit"/>
-   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>paper_field_line_edit</tabstop>
-  <tabstop>paper_title_line_edit</tabstop>
-  <tabstop>paper_authors_line_edit</tabstop>
-  <tabstop>paper_journal_line_edit</tabstop>
-  <tabstop>paper_year_line_edit</tabstop>
-  <tabstop>paper_tags_line_edit</tabstop>
   <tabstop>done_button</tabstop>
  </tabstops>
  <resources/>
