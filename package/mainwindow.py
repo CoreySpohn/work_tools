@@ -129,14 +129,21 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
         paper_authors = self.paper_data["creators"]
         author_str = ""
         for i, author in enumerate(paper_authors):
+            # if i + 1 == len(paper_authors):
+            #     author_str += f"[[{author['firstName']} {author['lastName']}]]"
+            # else:
+            #     author_str += f"[[{author['firstName']} {author['lastName']}]], "
             if i + 1 == len(paper_authors):
-                author_str += f"[[{author['firstName']} {author['lastName']}]]"
+                author_str += f"{author['firstName']} {author['lastName']}"
             else:
-                author_str += f"[[{author['firstName']} {author['lastName']}]], "
+                author_str += f"{author['firstName']} {author['lastName']}, "
 
         paper_title = self.paper_data["title"]
         paper_year = self.paper_data["date"].split("-")[0]
-        journal = self.paper_data["publicationTitle"]
+        if self.paper_data["itemType"] == "conferencePaper":
+            journal = self.paper_data["proceedingsTitle"]
+        else:
+            journal = self.paper_data["publicationTitle"]
         tags = self.paper_data["tags"]
         tags_str = ""
         for i, tag in enumerate(tags):
@@ -164,7 +171,7 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
             "\n"
             f"Title:: {paper_title}\n"
             f"Author:: {author_str}\n"
-            f"Journal:: [[{journal}]]\n"
+            f"Journal:: {journal}\n"
             f"Year:: {paper_year}\n"
             f"Tags:: {tags_str}\n"
             f"DOI:: {paper_doi}\n"
