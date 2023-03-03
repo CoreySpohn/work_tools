@@ -178,10 +178,18 @@ class MainWindow(qtw.QWidget):  # Would be something else if you didn't use widg
             f"ReviewedDate:: {datetime.date.today().strftime('%A, %B %d %Y')}\n"
             "\n---\n\n"
             f"## Abstract\n{paper_abstract}\n\n"
-            "## Summary of key points\n"
+            "## Reading checklist\n"
+            "- [ ] Abstract\n"
+            "- [ ] Conclusion\n"
+            "- [ ] Introduction\n"
+            "- [ ] Skim figures and middle\n"
+            "- [ ] Re-read\n"
+            "- [ ] Check for other papers that cite it\n\n"
+            "## Summarize argument\n"
             "-\n\n"
-            "## Other Comments\n-\n\n"
-            "## Interesting Cited References\n-\n"
+            "## Useful points\n-\n\n"
+            "Main takeaway:: \n\n"
+            "## Interesting references\n-\n"
         )
 
         # Use regex to escape the latex symbols that need to be escaped
