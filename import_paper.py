@@ -1,6 +1,8 @@
 import datetime
+
 # import os
 import re
+
 # import subprocess
 # import time
 from pathlib import Path
@@ -189,12 +191,18 @@ def handle_paper_files(paper_data) -> None:
         else:
             tags_str += f"[[{tag['tag']}]], "
     paper_abstract = paper_data["abstractNote"]
+    # Replace ':' with '-' because the ':' is used for the front matter in the markdown
+    paper_title = paper_title.replace(":", "-")
+    paper_abstract = paper_abstract.replace(":", "-")
     if "DOI" not in paper_data:
         paper_doi = ""
     else:
         paper_doi = paper_data["DOI"]
     paper_filename = f"{paper_title}.md"
-    paper_path = Path(Path.home(), "Documents/ideaverse/Knowledge/Notes/Sources/Papers")
+    # MAC
+    # paper_path = Path(Path.home(), "Documents/ideaverse/Knowledge/Notes/Sources/Papers")
+    # DESKTOP
+    paper_path = Path(Path.home(), ".vault/ideaverse/Knowledge/Notes/Sources/Papers")
     paper_filename_path = Path(paper_path, paper_filename)
 
     # Now set up the formatting for what we'll write to the file before opening it
@@ -228,11 +236,15 @@ def handle_paper_files(paper_data) -> None:
         "- [ ] Answer questions\n"
         "- [ ] Check for other papers that cite it\n\n"
         "## Questions to be answered\n"
-        "- \n\n"
-        "## Summarize argument\n"
-        "- \n\n"
+        "### What is this paper about, as a whole?\n"
+        "- \n"
+        "### What is being said in detail and with what methods?\n"
+        "- \n"
+        "### Is this true? In whole or in part?\n"
+        "- \n"
+        "### What of it?\n"
+        "- \n"
         "## Useful points\n- \n\n"
-        "Main takeaway:: \n\n"
         "## Interesting references\n-\n"
     )
 
